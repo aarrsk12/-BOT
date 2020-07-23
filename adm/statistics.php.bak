@@ -1,0 +1,250 @@
+<?php
+$sub_menu = "300700";
+include_once('./_common.php');
+
+auth_check($auth[$sub_menu], 'r');
+
+
+
+$g5['title'] = '통계';
+include_once('./admin.head.php');
+
+$day = date("Y-m-d 00:00:00");
+
+
+$todaytime = date("Y-m-d 00:00:00");
+$todaytime2 = date("Y-m-d 23:59:59");
+
+$day_of_the_week = date('w'); 
+$todaytime3 = date('Y-m-d H:i:s', strtotime($day." -".$day_of_the_week."day"));
+$todaytime4 = date("Y-m-1 00:00:00");
+echo $todaytime3;
+// 1일 통계 
+$today_chargesql = "select sum(mb_money)money, count(*)coul from g5_money where mo_clodate >= '".$todaytime."' and mo_clodate <= '".$todaytime2."'";
+$today_chargerow = sql_fetch($today_chargesql);
+$today_munsangsql = "select sum(point)money, count(*)coul from g5_munsang where datetime >= '".$todaytime."' and datetime <= '".$todaytime2."'";
+$today_munsangrow = sql_fetch($today_munsangsql);
+$today_aocnfsql = "select sum(wr_4)money, count(*)coul from g5_write_shoplog where wr_datetime >= '".$todaytime."' and wr_datetime <= '".$todaytime2."'";
+$today_aocnfrow = sql_fetch($today_aocnfsql);
+
+
+
+$today_chargemoney = $today_chargerow['money'] + $today_munsangrow['money'];
+$today_chargecnt = $today_chargerow['coul'] + $today_munsangrow['coul'];
+
+$today_plusbo = 0;
+
+$sql = " select * from g5_write_shoplog where wr_datetime >= '".$todaytime."' and wr_datetime <= '".$todaytime2."'";
+$result = sql_query($sql);
+
+for($i=0; $row=sql_fetch_array($result); $i++){
+	$today_sql = "select * from g5_write_code where wr_id = '".$row['wr_5']."'";
+	$today_row = sql_fetch($today_sql);
+
+	$today_sql2 = "select * from g5_write_code_shop where wr_num = '".$today_row['wr_2']."'";
+	$today_row2 = sql_fetch($today_sql2);
+
+	$today_plusbo = $today_plusbo + $today_row2['wr_2'];
+}
+$today_plusbo2 = $today_chargemoney - $today_plusbo;
+
+// 7일 통계 
+$week_chargesql = "select sum(mb_money)money, count(*)coul from g5_money where mo_clodate >= '".$todaytime3."' and mo_clodate <= '".$todaytime2."'";
+$week_chargerow = sql_fetch($week_chargesql);
+$week_munsangsql = "select sum(point)money, count(*)coul from g5_munsang where datetime >= '".$todaytime3."' and datetime <= '".$todaytime2."'";
+$week_munsangrow = sql_fetch($week_munsangsql);
+$week_aocnfsql = "select sum(wr_4)money, count(*)coul from g5_write_shoplog where wr_datetime >= '".$todaytime3."' and wr_datetime <= '".$todaytime2."'";
+$week_aocnfrow = sql_fetch($week_aocnfsql);
+
+
+
+$week_chargemoney = $week_chargerow['money'] + $week_munsangrow['money'];
+$week_chargecnt = $week_chargerow['coul'] + $week_munsangrow['coul'];
+
+$week_plusbo = 0;
+
+$sql = " select * from g5_write_shoplog where wr_datetime >= '".$todaytime3."' and wr_datetime <= '".$todaytime2."'";
+$result = sql_query($sql);
+
+for($i=0; $row2=sql_fetch_array($result); $i++){
+	$week_sql = "select * from g5_write_code where wr_id = '".$row2['wr_5']."'";
+	$week_row = sql_fetch($week_sql);
+
+	$week_sql2 = "select * from g5_write_code_shop where wr_num = '".$week_row['wr_2']."'";
+	$week_row2 = sql_fetch($week_sql2);
+
+	$week_plusbo = $week_plusbo + $week_row2['wr_2'];
+}
+$week_plusbo2 = $week_chargemoney - $week_plusbo;
+
+// 30일 통계 
+$month_chargesql = "select sum(mb_money)money, count(*)coul from g5_money where mo_clodate >= '".$todaytime4."'";
+$month_chargerow = sql_fetch($month_chargesql);
+$month_munsangsql = "select sum(point)money, count(*)coul from g5_munsang where datetime >= '".$todaytime4."'";
+$month_munsangrow = sql_fetch($month_munsangsql);
+$month_aocnfsql = "select sum(wr_4)money, count(*)coul from g5_write_shoplog where wr_datetime >= '".$todaytime4."'";
+$month_aocnfrow = sql_fetch($month_aocnfsql);
+
+
+
+$month_chargemoney = $month_chargerow['money'] + $month_munsangrow['money'];
+$month_chargecnt = $month_chargerow['coul'] + $month_munsangrow['coul'];
+
+$month_plusbo = 0;
+
+$sql = " select * from g5_write_shoplog where wr_datetime >= '".$todaytime4."' and wr_datetime <= '".$todaytime2."'";
+$result = sql_query($sql);
+
+for($i=0; $row3=sql_fetch_array($result); $i++){
+	$month_sql = "select * from g5_write_code where wr_id = '".$row3['wr_5']."'";
+	$month_row = sql_fetch($week_sql);
+
+	$month_sql2 = "select * from g5_write_code_shop where wr_num = '".$month_row['wr_2']."'";
+	$month_row2 = sql_fetch($week_sql2);
+
+	$month_plusbo = $month_plusbo + $month_row2['wr_2'];
+}
+$month_plusbo2 = $month_chargemoney - $month_plusbo;
+
+// 전체 
+$all_chargesql = "select sum(mb_money)money, count(*)coul from g5_money";
+$all_chargerow = sql_fetch($all_chargesql);
+$all_munsangsql = "select sum(point)money, count(*)coul from g5_munsang";
+$all_munsangrow = sql_fetch($all_munsangsql);
+$all_aocnfsql = "select sum(wr_4)money, count(*)coul from g5_write_shoplog";
+$all_aocnfrow = sql_fetch($all_aocnfsql);
+
+
+
+$all_chargemoney = $all_chargerow['money'] + $all_munsangrow['money'];
+$all_chargecnt = $all_chargerow['coul'] + $all_munsangrow['coul'];
+
+$all_plusbo = 0;
+
+$sql = " select * from g5_write_shoplog ";
+$result = sql_query($sql);
+
+for($i=0; $row3=sql_fetch_array($result); $i++){
+	$all_sql = "select * from g5_write_code where wr_id = '".$row3['wr_5']."'";
+	$all_row = sql_fetch($week_sql);
+
+	$all_sql2 = "select * from g5_write_code_shop where wr_num = '".$all_row['wr_2']."'";
+	$all_row2 = sql_fetch($week_sql2);
+
+	$all_plusbo = $all_plusbo + $all_row2['wr_2'];
+}
+$all_plusbo2 = $all_chargemoney - $all_plusbo;
+?>
+
+
+
+	<div class="tbl_head01 tbl_wrap">
+		<div class="stat_divs">
+			<p>금일 수익통계</p>
+			<div class="stat_div">
+				<span class="stat_span">금일 충전금액</span>
+				<span class="stat_spanb"><?php echo number_format($today_chargemoney);?>원 (<?php echo $today_chargecnt;?>건)</span>
+			</div>
+			<div class="stat_div">
+				<span class="stat_span">금일 매출금액</span>
+				<span class="stat_spanb"><?php echo number_format($today_aocnfrow['money']);?>원 (<?php echo $today_aocnfrow['coul'];?>건)</span>
+			</div>
+			<div class="stat_div">
+				<span class="stat_span">금일 판매수익</span>
+				<span class="stat_spanb"><?php echo number_format($today_plusbo2);?>원 (<?php echo $today_aocnfrow['coul'];?>건)</span>
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+		<div class="stat_divs">
+			<p>금주 수익통계</p>
+			<div class="stat_div">
+				<span class="stat_span">금주 충전금액</span>
+				<span class="stat_spanb"><?php echo number_format($week_chargemoney);?>원 (<?php echo $week_chargecnt;?>건)</span>
+			</div>
+			<div class="stat_div">
+				<span class="stat_span">금주 매출금액</span>
+				<span class="stat_spanb"><?php echo number_format($week_aocnfrow['money']);?>원 (<?php echo $week_aocnfrow['coul'];?>건)</span>
+			</div>
+			<div class="stat_div">
+				<span class="stat_span">금주 판매수익</span>
+				<span class="stat_spanb"><?php echo number_format($week_plusbo2);?>원 (<?php echo $week_aocnfrow['coul'];?>건)</span>
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+		<div class="stat_divs">
+			<p>금월 수익통계</p>
+			<div class="stat_div">
+				<span class="stat_span">금월 충전금액</span>
+				<span class="stat_spanb"><?php echo number_format($month_chargemoney);?>원 (<?php echo $month_chargecnt;?>건)</span>
+			</div>
+			<div class="stat_div">
+				<span class="stat_span">금월 매출금액</span>
+				<span class="stat_spanb"><?php echo number_format($month_aocnfrow['money']);?>원 (<?php echo $month_aocnfrow['coul'];?>건)</span>
+			</div>
+			<div class="stat_div">
+				<span class="stat_span">금월 판매수익</span>
+				<span class="stat_spanb"><?php echo number_format($month_plusbo2);?>원 (<?php echo $month_aocnfrow['coul'];?>건)</span>
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+		<div class="stat_divs">
+			<p>전체 수익통계</p>
+			<div class="stat_div">
+				<span class="stat_span">전체 충전금액</span>
+				<span class="stat_spanb"><?php echo number_format($all_chargemoney);?>원 (<?php echo $all_chargecnt;?>건)</span>
+			</div>
+			<div class="stat_div">
+				<span class="stat_span">전체 매출금액</span>
+				<span class="stat_spanb"><?php echo number_format($all_aocnfrow['money']);?>원 (<?php echo $all_aocnfrow['coul'];?>건)</span>
+			</div>
+			<div class="stat_div">
+				<span class="stat_span">전체 판매수익</span>
+				<span class="stat_spanb"><?php echo number_format($all_plusbo2);?>원 (<?php echo $all_aocnfrow['coul'];?>건)</span>
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+
+<script>
+	$(function() {
+		$('.permit').on('click', function() {
+			$('.cash_type').val('per');
+			$(this).parent().submit();
+			return false;
+		});
+
+		$('.cancel').on('click', function() {
+			$('.cash_type').val('can');
+			$(this).parent().submit();
+			return false;
+		});
+
+		$('.shop_delete').on('click', function(){
+			var result = confirm('정말로 삭제하겠습니까?');
+			if(result){
+				var num = $(this).attr('id');
+				window.location.href = "download_delete.php?wr_id="+num;
+			}else{
+
+			}
+		});
+	});
+	function add_menu()
+	{
+
+		var url = "./download_form.php";
+		window.open(url, "add_program", "left=300,top=200,width=750,height=450,scrollbars=yes,resizable=yes");
+		return false;
+	}
+	function view_menu(wr_id)
+	{
+
+		var url = "./download_view.php?wr_id="+wr_id;
+		window.open(url, "add_program", "left=300,top=200,width=750,height=450,scrollbars=yes,resizable=yes");
+		return false;
+	}
+</script>
+
+<?php
+include_once ('./admin.tail.php');
+?>

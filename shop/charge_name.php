@@ -1,0 +1,10 @@
+<?php
+include_once('./_common.php');
+
+$mb_name = trim($_POST['mb_name']);
+
+$sql = "update g5_member set mb_name = '".$mb_name."' where mb_id = '".$member['mb_id']."'";
+sql_query($sql);
+
+echo "1";
+?>
